@@ -1,0 +1,30 @@
+{
+  "name": "pampabank-ctf",
+  "version": "1.0.0",
+  "description": "PampaBank CTF — CTF educacional sobre HTTP, mass assignment e rastros digitais. Ambiente fictício para adolescentes.",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "canvas-confetti": "1.9.3",
+    "next": "^14.2.35",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "swagger-ui-react": "5.17.14"
+  },
+  "devDependencies": {
+    "@types/canvas-confetti": "1.6.4",
+    "@types/node": "20.14.10",
+    "@types/react": "18.3.3",
+    "@types/react-dom": "18.3.0",
+    "@types/swagger-ui-react": "4.18.3",
+    "autoprefixer": "10.4.19",
+    "postcss": "8.4.39",
+    "tailwindcss": "3.4.6",
+    "typescript": "5.5.3"
+  }
+}

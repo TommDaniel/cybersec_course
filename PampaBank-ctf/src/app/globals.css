@@ -1,0 +1,115 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  html,
+  body {
+    @apply bg-pampa-bg text-slate-100;
+    background-image: radial-gradient(
+        ellipse at top left,
+        rgba(124, 92, 255, 0.18),
+        transparent 50%
+      ),
+      radial-gradient(
+        ellipse at bottom right,
+        rgba(34, 211, 238, 0.12),
+        transparent 55%
+      ),
+      linear-gradient(180deg, #070b14 0%, #050810 100%);
+    background-attachment: fixed;
+    min-height: 100vh;
+    font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  }
+
+  ::selection {
+    background: rgba(124, 92, 255, 0.4);
+  }
+}
+
+@layer components {
+  .pampa-card {
+    @apply rounded-2xl border border-pampa-border bg-pampa-card/70 backdrop-blur-sm shadow-card;
+  }
+
+  .pampa-btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 font-medium transition;
+  }
+
+  .pampa-btn-primary {
+    @apply pampa-btn bg-gradient-to-r from-pampa-violet to-pampa-cyan text-white shadow-glow hover:brightness-110;
+  }
+
+  .pampa-btn-ghost {
+    @apply pampa-btn border border-pampa-border bg-pampa-panel/60 text-slate-200 hover:bg-pampa-panel;
+  }
+
+  .pampa-pill {
+    @apply inline-flex items-center gap-1 rounded-full border border-pampa-border bg-pampa-panel/70 px-3 py-1 text-xs font-medium text-slate-300;
+  }
+
+  .pampa-input {
+    @apply w-full rounded-xl border border-pampa-border bg-pampa-panel/60 px-4 py-3 text-slate-100 outline-none placeholder:text-slate-500 focus:border-pampa-violet focus:ring-2 focus:ring-pampa-violet/30;
+  }
+
+  .pampa-label {
+    @apply mb-2 block text-sm font-medium text-slate-300;
+  }
+
+  .pampa-link {
+    @apply text-pampa-cyan underline-offset-4 hover:underline;
+  }
+
+  .pampa-code {
+    @apply rounded-md bg-black/40 px-1.5 py-0.5 font-mono text-[0.85em] text-pampa-cyan;
+  }
+
+  .pampa-divider {
+    @apply h-px w-full bg-gradient-to-r from-transparent via-pampa-border to-transparent;
+  }
+}
+
+/* Swagger UI dark-mode tweaks. */
+.swagger-ui,
+.swagger-ui .info,
+.swagger-ui .opblock-tag,
+.swagger-ui .opblock .opblock-summary-operation-id,
+.swagger-ui .opblock .opblock-summary-path,
+.swagger-ui .opblock .opblock-summary-description,
+.swagger-ui table thead tr th,
+.swagger-ui .parameter__name,
+.swagger-ui .parameter__type,
+.swagger-ui .response-col_status,
+.swagger-ui .response-col_description__inner div.markdown,
+.swagger-ui .response-col_description__inner p,
+.swagger-ui .info .title,
+.swagger-ui .info p,
+.swagger-ui .info li,
+.swagger-ui .scheme-container,
+.swagger-ui .opblock-section-header h4,
+.swagger-ui .model-title,
+.swagger-ui .model {
+  color: #e2e8f0 !important;
+}
+
+.swagger-ui .scheme-container {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.swagger-ui .opblock {
+  background: rgba(19, 28, 48, 0.7) !important;
+  border-color: #1f2a44 !important;
+}
+
+.swagger-ui .opblock .opblock-section-header {
+  background: rgba(15, 22, 38, 0.9) !important;
+}
+
+.swagger-ui .topbar {
+  display: none;
+}
