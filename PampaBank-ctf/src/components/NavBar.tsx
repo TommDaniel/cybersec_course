@@ -24,11 +24,11 @@ export async function NavBar() {
     <header className="sticky top-0 z-30 border-b border-pampa-border/60 bg-pampa-bg/70 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
         <Link href="/" className="flex items-center gap-3">
-          <Logo />
+          <Logo className="h-12 w-auto" priority />
           <div className="leading-tight">
-            <p className="font-semibold tracking-tight">PampaBank</p>
+            <p className="font-semibold tracking-tight">PampaBank CTF</p>
             <p className="text-[11px] uppercase tracking-[0.18em] text-pampa-muted">
-              CTF · Treinamento
+              um projeto da PampaComputing
             </p>
           </div>
         </Link>
