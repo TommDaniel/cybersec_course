@@ -1,17 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
-import { ensureSession } from "@/lib/session";
-import { extractHints, logEvent } from "@/lib/audit";
+import { readState, writeState } from "@/lib/state";
+import { logEvent } from "@/lib/audit";
 
 // POST /api/login
 // Login fictício: aceita apenas as credenciais de demonstração.
-// Não há banco de dados; a sessão é apenas um cookie aleatório.
+// Não há banco de dados; o estado é uma cookie assinada (HMAC).
 
 const DEMO_EMAIL = "aluno@pampabank.ctf";
 const DEMO_PASSWORD = "ctf123";
 
 export async function POST(req: NextRequest) {
-  const session = ensureSession();
-  const hints = extractHints(req);
+  const state = await readState();
 
   let body: any = {};
   try {
@@ -24,15 +23,16 @@ export async function POST(req: NextRequest) {
   const password = String(body?.password ?? "");
   const ok = email === DEMO_EMAIL && password === DEMO_PASSWORD;
 
-  logEvent(session, {
+  logEvent(state, {
     type: "LOGIN",
     method: "POST",
     path: "/api/login",
-    hints,
     fieldsSent: Object.keys(body ?? {}),
     suspicious: !ok,
     note: ok ? "Login bem-sucedido" : "Credenciais inválidas",
   });
+
+  await writeState(state);
 
   if (!ok) {
     return NextResponse.json(

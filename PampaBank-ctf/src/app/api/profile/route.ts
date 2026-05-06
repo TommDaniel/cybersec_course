@@ -1,21 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
-import { ensureSession } from "@/lib/session";
-import { extractHints, logEvent } from "@/lib/audit";
+import { readState, writeState } from "@/lib/state";
+import { logEvent } from "@/lib/audit";
 
 // GET /api/profile — retorna o perfil do usuário fictício da sessão.
-export async function GET(req: NextRequest) {
-  const session = ensureSession();
-  const hints = extractHints(req);
+export async function GET(_req: NextRequest) {
+  const state = await readState();
 
-  logEvent(session, {
+  logEvent(state, {
     type: "PROFILE_VIEW",
     method: "GET",
     path: "/api/profile",
-    hints,
     suspicious: false,
   });
 
-  return NextResponse.json(session.user);
+  await writeState(state);
+  return NextResponse.json(state.user);
 }
 
 // PATCH /api/profile
@@ -35,8 +34,7 @@ export async function GET(req: NextRequest) {
 // Mantemos a versão insegura aqui de propósito, com este aviso visível,
 // porque o objetivo do CTF é ensinar o aluno a encontrar exatamente isto.
 export async function PATCH(req: NextRequest) {
-  const session = ensureSession();
-  const hints = extractHints(req);
+  const state = await readState();
 
   let body: Record<string, unknown> = {};
   try {
@@ -51,20 +49,19 @@ export async function PATCH(req: NextRequest) {
   );
 
   // ⚠️ Linha vulnerável de propósito — espelha o erro real "mass assignment".
-  session.user = { ...session.user, ...(body as any) };
+  state.user = { ...state.user, ...(body as any) };
 
   // Coerção mínima para manter o tipo coerente (não é uma "correção", apenas
   // evita que o front quebre se o aluno enviar tipos errados).
-  if (typeof session.user.isPremium !== "boolean") {
-    session.user.isPremium = Boolean(session.user.isPremium);
+  if (typeof state.user.isPremium !== "boolean") {
+    state.user.isPremium = Boolean(state.user.isPremium);
   }
-  if (session.user.isPremium) session.user.accountType = "premium";
+  if (state.user.isPremium) state.user.accountType = "premium";
 
-  logEvent(session, {
+  logEvent(state, {
     type: "PROFILE_UPDATE",
     method: "PATCH",
     path: "/api/profile",
-    hints,
     fieldsSent,
     suspicious: sensitive,
     note: sensitive
@@ -72,5 +69,6 @@ export async function PATCH(req: NextRequest) {
       : "Atualização comum de perfil",
   });
 
-  return NextResponse.json({ ok: true, user: session.user });
+  await writeState(state);
+  return NextResponse.json({ ok: true, user: state.user });
 }

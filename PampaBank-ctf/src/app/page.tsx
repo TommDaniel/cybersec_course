@@ -6,16 +6,16 @@ const features = [
     body: "Você vai abrir o DevTools e ver requisições reais, com headers, métodos e códigos de status.",
   },
   {
-    title: "Swagger guiado",
-    body: "Toda a API tem documentação interativa em /docs. Dá para testar tudo direto do navegador.",
+    title: "API documentada",
+    body: "Toda a API tem documentação interativa para testar requisições direto do navegador.",
   },
   {
     title: "Burp opcional",
     body: "Quem quiser ir além pode interceptar e editar as requisições com o Burp Suite.",
   },
   {
-    title: "Rastros explicados",
-    body: "No final, mostramos exatamente o que ficou registrado das suas próprias requisições.",
+    title: "Plot twist no fim",
+    body: "Concluindo o desafio, o app revela o que estava acontecendo nos bastidores das suas ações.",
   },
 ];
 
@@ -35,7 +35,7 @@ export default function HomePage() {
             </span>
             <br />
             <span className="text-2xl text-pampa-muted md:text-3xl">
-              Você deixou rastros.
+              Vire premium sem pagar nada.
             </span>
           </h1>
           <p className="mt-6 max-w-lg text-lg text-slate-300">
@@ -46,9 +46,6 @@ export default function HomePage() {
           <div className="mt-8 flex flex-wrap gap-3">
             <Link href="/login" className="pampa-btn-primary">
               Entrar no Portal →
-            </Link>
-            <Link href="/learn" className="pampa-btn-ghost">
-              Nunca ouvi falar de HTTP
             </Link>
           </div>
           <p className="mt-6 text-sm text-pampa-muted">

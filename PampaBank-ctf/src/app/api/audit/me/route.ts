@@ -1,34 +1,36 @@
 import { NextRequest, NextResponse } from "next/server";
-import { ensureSession } from "@/lib/session";
 import {
-  extractHints,
-  logEvent,
-} from "@/lib/audit";
-import { computeRiskScore, sensitiveFieldsTouched } from "@/lib/store";
+  computeRiskScore,
+  readState,
+  sensitiveFieldsTouched,
+  writeState,
+} from "@/lib/state";
+import { extractHints, logEvent } from "@/lib/audit";
 
 // GET /api/audit/me
 // Resumo dos rastros que o aluno deixou na sessão atual.
 // Usado tanto pela página /audit quanto como conteúdo educativo —
 // mostrar exatamente o que um servidor "vê" sem nenhum truque adicional.
 export async function GET(req: NextRequest) {
-  const session = ensureSession();
+  const state = await readState();
   const hints = extractHints(req);
 
-  logEvent(session, {
+  logEvent(state, {
     type: "AUDIT_VIEW",
     method: "GET",
     path: "/api/audit/me",
-    hints,
     suspicious: false,
   });
 
-  const events = session.events;
+  const events = state.events;
   const riskScore = computeRiskScore(events);
   const sensitive = sensitiveFieldsTouched(events);
   const suspiciousEvents = events.filter((e) => e.suspicious).length;
 
+  await writeState(state);
+
   return NextResponse.json({
-    sessionId: `sess_${session.sessionId.slice(0, 8)}`,
+    sessionId: `sess_${state.sid}`,
     riskScore,
     summary: {
       totalRequests: events.length,

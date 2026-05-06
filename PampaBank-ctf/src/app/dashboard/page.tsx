@@ -2,7 +2,9 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import confetti from "canvas-confetti";
+import { useRouter } from "next/navigation";
+import { HintButton } from "@/components/HintButton";
+import { VictoryModal } from "@/components/VictoryModal";
 
 type Profile = {
   id: number;
@@ -12,13 +14,17 @@ type Profile = {
   isPremium: boolean;
 };
 
+const VICTORY_FLAG_KEY = "pampabank.sawVictoryFor";
+
 export default function DashboardPage() {
+  const router = useRouter();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [editingName, setEditingName] = useState(false);
   const [newName, setNewName] = useState("");
   const [updateMsg, setUpdateMsg] = useState<string | null>(null);
   const [flag, setFlag] = useState<string | null>(null);
-  const confettiFiredRef = useRef(false);
+  const [showModal, setShowModal] = useState(false);
+  const justBecamePremium = useRef(false);
 
   const load = useCallback(async () => {
     const res = await fetch("/api/profile", { cache: "no-store" });
@@ -33,28 +39,32 @@ export default function DashboardPage() {
     load();
   }, [load]);
 
-  // When the user becomes premium, fetch the flag and fire confetti once.
+  // First time we observe isPremium === true in this tab/session, show the
+  // victory modal. Subsequent loads (refresh, returning from /audit) just
+  // show the inline premium dashboard.
   useEffect(() => {
-    if (!profile?.isPremium || confettiFiredRef.current) return;
-    confettiFiredRef.current = true;
+    if (!profile?.isPremium) return;
+
+    const seen = sessionStorage.getItem(VICTORY_FLAG_KEY);
+    const shouldShow = !seen;
 
     fetch("/api/flag", { cache: "no-store" })
       .then((r) => (r.ok ? r.json() : null))
       .then((d) => d?.flag && setFlag(d.flag))
       .catch(() => {});
 
-    const burst = (x: number) =>
-      confetti({
-        particleCount: 90,
-        startVelocity: 45,
-        spread: 70,
-        origin: { x, y: 0.3 },
-        colors: ["#7c5cff", "#22d3ee", "#34d399", "#f5c451"],
-      });
-    burst(0.2);
-    setTimeout(() => burst(0.8), 250);
-    setTimeout(() => burst(0.5), 500);
-  }, [profile?.isPremium]);
+    if (shouldShow) {
+      sessionStorage.setItem(VICTORY_FLAG_KEY, "1");
+      setShowModal(true);
+    }
+
+    if (justBecamePremium.current) {
+      // Refresh server components so the NavBar picks up the new state and
+      // unlocks Atividade / Aprender / API Docs.
+      router.refresh();
+      justBecamePremium.current = false;
+    }
+  }, [profile?.isPremium, router]);
 
   async function saveName(e: React.FormEvent) {
     e.preventDefault();
@@ -65,8 +75,13 @@ export default function DashboardPage() {
       body: JSON.stringify({ name: newName }),
     });
     if (res.ok) {
+      const data = await res.json();
       setUpdateMsg("Nome atualizado.");
       setEditingName(false);
+      // Detect the moment the student turned premium via mass assignment.
+      if (data?.user?.isPremium && !profile?.isPremium) {
+        justBecamePremium.current = true;
+      }
       await load();
     } else {
       setUpdateMsg("Não deu para atualizar.");
@@ -83,11 +98,7 @@ export default function DashboardPage() {
 
   return (
     <div className="mx-auto max-w-5xl px-6 py-10">
-      {profile.isPremium ? (
-        <VictoryBanner flag={flag} />
-      ) : (
-        <ChallengeBanner />
-      )}
+      {profile.isPremium ? <PremiumBanner /> : <ChallengeBanner />}
 
       <div className="mt-8 grid gap-6 md:grid-cols-3">
         <div className="pampa-card p-6 md:col-span-2">
@@ -166,7 +177,11 @@ export default function DashboardPage() {
             </div>
             <div className="flex items-center justify-between rounded-lg bg-black/30 px-4 py-2">
               <span className="text-pampa-muted">isPremium</span>
-              <span className={profile.isPremium ? "text-pampa-mint" : "text-pampa-rose"}>
+              <span
+                className={
+                  profile.isPremium ? "text-pampa-mint" : "text-pampa-rose"
+                }
+              >
                 {String(profile.isPremium)}
               </span>
             </div>
@@ -187,7 +202,9 @@ export default function DashboardPage() {
               <li
                 key={b}
                 className={`flex items-center gap-3 ${
-                  profile.isPremium ? "text-slate-100" : "text-pampa-muted line-through"
+                  profile.isPremium
+                    ? "text-slate-100"
+                    : "text-pampa-muted line-through"
                 }`}
               >
                 <span
@@ -212,6 +229,18 @@ export default function DashboardPage() {
       </div>
 
       {profile.isPremium && <VulnerabilityExplainer />}
+
+      {/* Hint button only while the challenge is unsolved. */}
+      {!profile.isPremium && <HintButton />}
+
+      {/* Two-stage victory modal — fires once per tab the first time we
+          observe isPremium === true. */}
+      {showModal && (
+        <VictoryModal
+          flag={flag ?? "CTF{never_trust_the_client}"}
+          onClose={() => setShowModal(false)}
+        />
+      )}
     </div>
   );
 }
@@ -219,63 +248,49 @@ export default function DashboardPage() {
 function ChallengeBanner() {
   return (
     <div className="pampa-card overflow-hidden p-6">
-      <div className="flex flex-col items-start gap-4 md:flex-row md:items-center md:justify-between">
-        <div>
-          <p className="pampa-pill">
-            <span className="h-2 w-2 rounded-full bg-pampa-cyan" />
-            Missão CTF
-          </p>
-          <h2 className="mt-3 text-xl font-semibold">
-            Vire cliente <span className="text-pampa-gold">PREMIUM</span> sem pagar nada
-          </h2>
-          <p className="mt-1 max-w-xl text-sm text-pampa-muted">
-            Em algum lugar deste portal o servidor confia demais no que vem do
-            navegador. Use DevTools, Swagger ou Burp para encontrar o ponto fraco.
-          </p>
-        </div>
-        <div className="flex gap-2">
-          <Link href="/docs" className="pampa-btn-ghost">
-            Ver Swagger
-          </Link>
-          <Link href="/learn" className="pampa-btn-ghost">
-            Não sei por onde começar
-          </Link>
-        </div>
-      </div>
+      <p className="pampa-pill">
+        <span className="h-2 w-2 rounded-full bg-pampa-cyan" />
+        Missão CTF
+      </p>
+      <h2 className="mt-3 text-xl font-semibold">
+        Vire cliente <span className="text-pampa-gold">PREMIUM</span> sem
+        pagar nada
+      </h2>
+      <p className="mt-1 max-w-xl text-sm text-pampa-muted">
+        Em algum lugar deste portal o servidor confia demais no que vem do
+        navegador. Encontre o ponto fraco usando as ferramentas que você já
+        tem no seu computador.
+      </p>
+      <p className="mt-3 text-xs text-pampa-muted">
+        Está empacado? Clica no botão{" "}
+        <span className="pampa-code">💡 Estou empacado</span> no canto
+        inferior direito para uma dica de cada vez.
+      </p>
     </div>
   );
 }
 
-function VictoryBanner({ flag }: { flag: string | null }) {
+function PremiumBanner() {
   return (
-    <div className="pampa-card relative overflow-hidden p-8">
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-pampa-violet/10 via-transparent to-pampa-cyan/10" />
-      <p className="pampa-pill border-pampa-mint/40 text-pampa-mint">
-        <span className="h-2 w-2 rounded-full bg-pampa-mint" />
-        Desafio concluído
+    <div className="pampa-card overflow-hidden p-6">
+      <p className="pampa-pill border-pampa-gold/40 text-pampa-gold">
+        <span className="h-2 w-2 rounded-full bg-pampa-gold" />
+        Cliente premium
       </p>
-      <h2 className="mt-3 text-3xl font-semibold tracking-tight">
-        Parabéns, você encontrou a falha. 🎉
-      </h2>
-      <p className="mt-2 max-w-2xl text-pampa-muted">
-        O servidor aceitou um campo que nunca deveria ter aceitado de um cliente.
-        Isso se chama <strong>mass assignment</strong> e é uma das falhas mais
-        comuns em APIs reais.
-      </p>
-
-      <div className="mt-5 inline-flex items-center gap-3 rounded-xl border border-pampa-mint/40 bg-pampa-mint/10 px-4 py-3 font-mono">
-        <span className="text-pampa-muted">Flag:</span>
-        <span className="text-pampa-mint">{flag ?? "CTF{never_trust_the_client}"}</span>
-      </div>
-
-      <div className="mt-6 flex flex-wrap gap-3">
-        <Link href="/audit" className="pampa-btn-primary">
-          Ver meus rastros →
-        </Link>
-        <Link href="/learn" className="pampa-btn-ghost">
-          Entender por que isso funcionou
+      <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+        <h2 className="text-xl font-semibold">
+          Bem-vindo ao plano premium do PampaBank.
+        </h2>
+        <Link href="/audit" className="pampa-btn-ghost text-sm">
+          Ver minha atividade →
         </Link>
       </div>
+      <p className="mt-1 text-sm text-pampa-muted">
+        Você concluiu o desafio. Continue explorando: a aba{" "}
+        <strong>Atividade</strong> mostra os rastros que você deixou,{" "}
+        <strong>Aprender</strong> tem o glossário do CTF e{" "}
+        <strong>API Docs</strong> tem o Swagger interativo.
+      </p>
     </div>
   );
 }

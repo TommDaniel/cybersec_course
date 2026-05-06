@@ -155,7 +155,7 @@ Outras boas práticas equivalentes:
 
 ## 🪞 Rastros digitais — o plot twist
 
-Depois da vitória, a página **`/audit`** ("Central Antifraude") mostra os metadados que o servidor já tinha de você o tempo todo:
+Depois da vitória, a página **`/audit`** ("Atividade da sessão") mostra os metadados que o servidor já tinha de você o tempo todo:
 
 - Método e rota de cada requisição, com horário
 - User-Agent, idioma do navegador
@@ -220,7 +220,8 @@ src/
       login/route.ts         # POST login fictício
       openapi/route.ts       # GET spec OpenAPI
       profile/route.ts       # GET / PATCH (vulnerável)
-    audit/page.tsx           # Central Antifraude
+    audit/page.tsx           # Atividade da sessão (gated)
+    audit/AuditClient.tsx    # UI client da atividade
     dashboard/page.tsx       # Portal do cliente + vitória
     docs/page.tsx            # Swagger UI
     layout.tsx               # Shell com NavBar + footer

@@ -72,9 +72,8 @@ export const openapiSpec = {
         tags: ["Profile"],
         summary: "Atualizar perfil",
         description:
-          "O frontend envia apenas `{ name }`.\n\n" +
-          "**Dica de CTF**: o servidor aceita o body inteiro. O que aconteceria se " +
-          "você enviasse outros campos do schema `Profile`?",
+          "Atualiza o perfil do cliente. O frontend envia apenas `{ name }` " +
+          "ao salvar a edição de nome no portal.",
         requestBody: {
           required: true,
           content: {
@@ -85,14 +84,7 @@ export const openapiSpec = {
                   name: { type: "string", example: "Novo Nome" },
                 },
               },
-              examples: {
-                "Atualização normal": {
-                  value: { name: "Aluno PampaBank" },
-                },
-                "Hmm... e se eu enviar isso?": {
-                  value: { name: "Aluno PampaBank", isPremium: true },
-                },
-              },
+              example: { name: "Aluno PampaBank" },
             },
           },
         },

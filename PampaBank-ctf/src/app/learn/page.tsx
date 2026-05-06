@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
+import { readState } from "@/lib/state";
 
 const topics = [
   {
@@ -207,7 +209,13 @@ const topics = [
   },
 ];
 
-export default function LearnPage() {
+// Server-side gate: the glossary is the post-victory reference.
+// Anyone who hasn't completed the challenge gets sent back to the dashboard
+// to try first — the hint button there gives them just enough nudges.
+export default async function LearnPage() {
+  const state = await readState();
+  if (!state.user.isPremium) redirect("/dashboard");
+
   return (
     <div className="mx-auto max-w-4xl px-6 py-10">
       <header>

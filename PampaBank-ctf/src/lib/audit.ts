@@ -12,7 +12,23 @@
 // "boring" request metadata already paints a recognisable trail.
 
 import type { NextRequest } from "next/server";
-import type { AuditEvent, SessionState } from "./store";
+import type { State } from "./state";
+
+export type AuditEvent = {
+  type:
+    | "LOGIN"
+    | "PROFILE_VIEW"
+    | "PROFILE_UPDATE"
+    | "FLAG_ATTEMPT"
+    | "FLAG_SUCCESS"
+    | "AUDIT_VIEW";
+  method: string;
+  path: string;
+  time: string;
+  fieldsSent?: string[];
+  suspicious: boolean;
+  note?: string;
+};
 
 export type RequestHints = {
   userAgent: string;
@@ -40,12 +56,10 @@ export function extractHints(req: NextRequest): RequestHints {
 }
 
 function maskIp(ip: string): string {
-  // IPv4: keep first three octets, mask last as xxx
   if (/^\d+\.\d+\.\d+\.\d+$/.test(ip)) {
     const parts = ip.split(".");
     return `${parts[0]}.${parts[1]}.${parts[2]}.xxx`;
   }
-  // IPv6 or unknown: keep prefix only
   return ip.slice(0, 8) + "::xxxx";
 }
 
@@ -53,32 +67,21 @@ export type LogInput = {
   type: AuditEvent["type"];
   method: string;
   path: string;
-  hints: RequestHints;
   fieldsSent?: string[];
   suspicious?: boolean;
   note?: string;
 };
 
-const MAX_EVENTS = 50;
-
-export function logEvent(session: SessionState, input: LogInput): AuditEvent {
+export function logEvent(state: State, input: LogInput): AuditEvent {
   const event: AuditEvent = {
     type: input.type,
     method: input.method,
     path: input.path,
     time: new Date().toISOString(),
-    userAgent: input.hints.userAgent,
-    language: input.hints.language,
-    ipApprox: input.hints.ipApprox,
-    referer: input.hints.referer,
-    origin: input.hints.origin,
     fieldsSent: input.fieldsSent,
     suspicious: input.suspicious ?? false,
     note: input.note,
   };
-  session.events.push(event);
-  if (session.events.length > MAX_EVENTS) {
-    session.events.splice(0, session.events.length - MAX_EVENTS);
-  }
+  state.events.push(event);
   return event;
 }
