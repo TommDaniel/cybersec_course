@@ -9,8 +9,10 @@ export const openapiSpec = {
     description:
       "API fictícia do **PampaBank**, criada para um CTF educacional.\n\n" +
       "⚠️ Ambiente de treino: nada aqui é um banco real.\n\n" +
-      "Existe **uma falha proposital** em uma das rotas. Sua missão é encontrá-la usando " +
-      "DevTools, Swagger ou Burp Suite e desbloquear a área premium.",
+      "Esta documentação é o **complemento da atividade** — agora que você já " +
+      "entendeu na prática como o servidor recebe e processa requisições, " +
+      "use estes contratos pra revisar tudo o que aconteceu e enxergar a " +
+      "falha de mass assignment de outro ângulo.",
   },
   servers: [{ url: "/", description: "Mesma origem" }],
   tags: [
