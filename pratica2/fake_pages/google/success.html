@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Aguarde...</title>
+  <style>
+    body {
+      font-family: "Roboto", sans-serif;
+      background: #fff;
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      color: #202124;
+    }
+    .spinner {
+      width: 40px; height: 40px;
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #1a73e8;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 24px;
+    }
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+    .reveal {
+      max-width: 480px;
+      margin-top: 24px;
+      padding: 24px;
+      border: 2px dashed #ea4335;
+      border-radius: 8px;
+      color: #b71c1c;
+      text-align: center;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="spinner"></div>
+  <div>Conectando...</div>
+
+  <div class="reveal" id="reveal">
+    <h2>🚨 Você acabou de "entregar" sua senha 🚨</h2>
+    <p>
+      Esta era uma <strong>página falsa</strong>, hospedada no laptop do
+      atacante na mesma Wi-Fi que você. Em uma rede Wi-Fi pública real,
+      o ataque seria idêntico — e a senha já estaria comprometida.
+    </p>
+    <p style="font-size:14px;color:#444">
+      Lição: nunca digite senhas em redes Wi-Fi que você não controla.
+      Use VPN, confira o cadeado E o domínio, e ative autenticação em 2 fatores.
+    </p>
+  </div>
+
+  <script>
+    setTimeout(() => {
+      document.querySelector(".spinner").style.display = "none";
+      document.getElementById("reveal").style.display = "block";
+    }, 1800);
+  </script>
+</body>
+</html>

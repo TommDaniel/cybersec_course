@@ -1,0 +1,41 @@
+Show students how dangerous it is to connect to a public/untrusted WiFi, even in a controlled way. Make the demo as visual and impactful as possible using only local network techniques.
+Required Capabilities (step-by-step):
+
+Network Discovery Phase (Most important and reliable)
+Automatically detect the subnet (focus on 192.168.0.0/24 and 192.168.1.0/24)
+Discover all devices with nmap (MAC address, vendor/manufacturer, hostname, OS detection)
+Clearly highlight the target Android device
+
+Detailed Device Scanning
+Port scan and service detection on the Android target
+Show what is visible even when the device is "closed"
+
+Man-in-the-Middle & ARP Spoofing (High visual impact)
+Use Bettercap or Scapy for ARP spoofing
+Demonstrate the attacker can intercept traffic between the Android and the router
+Show how the victim's connection can be slowed down or disrupted
+Capture and display local DNS queries and any traffic
+
+DNS Spoofing + Fake Login Page (Strongly recommended for impact without internet)
+Create and host a simple fake login page locally on the attacker machine (example: fake Google, Instagram or WiFi login page)
+Use DNS spoofing to redirect the Android device to this fake page when it tries to access common domains
+This is one of the most visual and scary demonstrations possible without real internet
+
+Professional Markdown Report
+Generate Android_PublicWiFi_Demo_Report_[Date].md
+Include sections: Executive Summary, Devices Discovered, Attack Vectors, What the Attacker Could See/Do, Screenshots guide, Security Recommendations
+Use emojis and clear language suitable for teenagers
+Emphasize what would be possible if the network had internet
+
+
+Technical Requirements:
+
+Python 3 script made for Pop!_OS
+Modular: separate functions for discovery, scanning, mitm, dns_spoofing, report
+Lots of input() safety prompts before every dangerous action
+Clear warnings in code and report
+Include step-by-step instructions (README) on how to run each phase
+Prioritize tools that work offline: nmap, scapy, bettercap, hostapd/dnsmasq if needed for spoofing
+
+Tone: Educational, responsible, exciting. Make it clear this is only for authorized lab environment.
+Generate the complete main Python script + a detailed README.md with commands.

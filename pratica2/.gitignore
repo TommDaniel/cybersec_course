@@ -1,0 +1,7 @@
+# Local artifacts
+captures/*.jsonl
+reports/*.md
+**/__pycache__/
+*.pyc
+.venv/
+venv/

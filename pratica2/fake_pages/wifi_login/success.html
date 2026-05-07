@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Conectado!</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Roboto, sans-serif;
+      background: linear-gradient(135deg, #0b66c3 0%, #062f5e 100%);
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      color: #fff;
+    }
+    .card {
+      width: 100%;
+      max-width: 420px;
+      background: #fff;
+      color: #222;
+      border-radius: 12px;
+      padding: 28px;
+      text-align: center;
+      box-shadow: 0 12px 40px rgba(0,0,0,.25);
+    }
+    .icon { font-size: 56px; }
+    h1 { font-size: 22px; margin: 8px 0; color: #b71c1c; }
+    p  { font-size: 14px; color: #444; line-height: 1.5; }
+    .reveal {
+      margin-top: 16px;
+      padding: 14px;
+      background: #fff3cd;
+      border: 2px dashed #b71c1c;
+      border-radius: 8px;
+      font-size: 13px;
+      color: #7a1717;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="icon">🚨</div>
+    <h1>Senha capturada</h1>
+    <p>
+      Você acabou de conectar a uma rede que <strong>parecia</strong> ser
+      um Wi-Fi gratuito legítimo, mas era um portal falso hospedado pelo
+      atacante. Sua senha apareceu no terminal dele em texto plano.
+    </p>
+    <div class="reveal">
+      💡 Em uma cafeteria com Wi-Fi aberta, este ataque é idêntico — e o
+      atacante já estaria testando sua senha em outros sites (Gmail,
+      Instagram, banco) enquanto você ainda achava que tinha "logado".
+    </div>
+    <p style="margin-top:18px">
+      Use VPN. Ative autenticação em duas etapas. Nunca reutilize senhas.
+    </p>
+  </div>
+</body>
+</html>

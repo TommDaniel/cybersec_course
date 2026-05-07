@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Login • Instagram</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: #fafafa;
+      margin: 0;
+      color: #262626;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+    }
+    .danger {
+      max-width: 350px;
+      margin-bottom: 12px;
+      background: #fff3cd;
+      border: 1px solid #ffeeba;
+      border-radius: 4px;
+      padding: 8px 12px;
+      font-size: 12px;
+      color: #856404;
+      text-align: center;
+    }
+    .card {
+      width: 350px;
+      background: white;
+      border: 1px solid #dbdbdb;
+      padding: 32px 40px 16px;
+    }
+    .logo {
+      text-align: center;
+      font-family: "Billabong", "Lobster", cursive;
+      font-size: 51px;
+      font-weight: 400;
+      margin: 22px 0 36px;
+      background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    input {
+      width: 100%;
+      padding: 9px 8px;
+      font-size: 12px;
+      border: 1px solid #dbdbdb;
+      border-radius: 3px;
+      background: #fafafa;
+      margin-bottom: 6px;
+      outline: none;
+    }
+    input:focus { border-color: #a8a8a8; }
+    button.submit {
+      width: 100%;
+      background: #0095f6;
+      color: white;
+      border: none;
+      padding: 7px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+    button.submit:hover { background: #1877f2; }
+    .or {
+      display: flex;
+      align-items: center;
+      margin: 18px 0;
+      color: #8e8e8e;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .or::before, .or::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: #dbdbdb;
+    }
+    .or::before { margin-right: 18px; }
+    .or::after  { margin-left:  18px; }
+    .fb {
+      text-align: center;
+      color: #385185;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-bottom: 22px;
+    }
+    .forgot {
+      text-align: center;
+      font-size: 12px;
+      color: #00376b;
+      margin: 12px 0 22px;
+    }
+    .signup {
+      width: 350px;
+      text-align: center;
+      background: white;
+      border: 1px solid #dbdbdb;
+      padding: 22px;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+    .signup a {
+      color: #0095f6;
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .footer {
+      max-width: 350px;
+      margin-top: 24px;
+      font-size: 12px;
+      color: #8e8e8e;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="danger">⚠️ <strong>DEMO de laboratório</strong> — esta página é FALSA. Não digite senhas reais.</div>
+
+  <div class="card">
+    <div class="logo">Instagram</div>
+
+    <form method="POST" action="/login" autocomplete="off">
+      <input type="text" name="username" placeholder="Telefone, nome de usuário ou e-mail" required autofocus>
+      <input type="password" name="password" placeholder="Senha" required>
+      <button class="submit" type="submit">Entrar</button>
+    </form>
+
+    <div class="or">OU</div>
+
+    <div class="fb">
+      <span style="display:inline-block;width:16px;height:16px;background:#385185;border-radius:50%;color:white;font-weight:bold;margin-right:6px;line-height:16px;font-size:11px">f</span>
+      Entrar com o Facebook
+    </div>
+
+    <div class="forgot">Esqueceu a senha?</div>
+  </div>
+
+  <div class="signup">
+    Não tem uma conta? <a href="#">Cadastre-se</a>
+  </div>
+
+  <div class="footer">
+    Versão demonstrativa para aula de segurança da informação.
+  </div>
+</body>
+</html>
