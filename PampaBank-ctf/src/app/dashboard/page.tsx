@@ -30,13 +30,40 @@ export default function DashboardPage() {
     const res = await fetch("/api/profile", { cache: "no-store" });
     if (res.ok) {
       const data = (await res.json()) as Profile;
-      setProfile(data);
+      setProfile((prev) => {
+        // Detect basic → premium transition no matter who triggered the
+        // load (saveName, visibility/focus listener, …) so the NavBar
+        // refresh below fires once and only once.
+        if (data.isPremium && prev && !prev.isPremium) {
+          justBecamePremium.current = true;
+        }
+        return data;
+      });
       setNewName(data.name);
     }
   }, []);
 
   useEffect(() => {
     load();
+  }, [load]);
+
+  // The student often triggers the PATCH from outside this React tree
+  // (Burp Repeater, DevTools console, curl, /docs Swagger UI in another
+  // tab). In those cases the server cookie flips to isPremium=true but
+  // this component never refetches, so the UI looks "stuck" until a
+  // hard reload. Re-running load() whenever the tab regains visibility
+  // or focus fixes that — switching back from Burp/DevTools is enough
+  // to sync the profile and trigger the victory modal.
+  useEffect(() => {
+    const onVisible = () => {
+      if (document.visibilityState === "visible") load();
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    window.addEventListener("focus", load);
+    return () => {
+      document.removeEventListener("visibilitychange", onVisible);
+      window.removeEventListener("focus", load);
+    };
   }, [load]);
 
   // First time we observe isPremium === true in this tab/session, show the
@@ -46,7 +73,10 @@ export default function DashboardPage() {
     if (!profile?.isPremium) return;
 
     const seen = sessionStorage.getItem(VICTORY_FLAG_KEY);
-    const shouldShow = !seen;
+    // Show the celebration on a real basic→premium flip even when the
+    // sessionStorage flag is stale from a previous testing run in the
+    // same tab.
+    const shouldShow = !seen || justBecamePremium.current;
 
     fetch("/api/flag", { cache: "no-store" })
       .then((r) => (r.ok ? r.json() : null))
@@ -75,13 +105,8 @@ export default function DashboardPage() {
       body: JSON.stringify({ name: newName }),
     });
     if (res.ok) {
-      const data = await res.json();
       setUpdateMsg("Nome atualizado.");
       setEditingName(false);
-      // Detect the moment the student turned premium via mass assignment.
-      if (data?.user?.isPremium && !profile?.isPremium) {
-        justBecamePremium.current = true;
-      }
       await load();
     } else {
       setUpdateMsg("Não deu para atualizar.");
